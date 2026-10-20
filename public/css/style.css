@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    background: #0A0A0A;
+    color: #FFFFFF;
+    min-height: 100vh;
+}
+
+.auth-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.auth-box {
+    background: #141414;
+    border: 1px solid #2A2A2A;
+    border-radius: 16px;
+    padding: 32px 24px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: #3B82F6;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.auth-box h2 {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 24px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    color: #AAA;
+    margin-bottom: 6px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    background: #0D0D0D;
+    border: 1px solid #2A2A2A;
+    border-radius: 10px;
+    color: white;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #3B82F6;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: #3B82F6;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.btn-primary:hover {
+    background: #2563EB;
+}
+
+.switch-auth {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #888;
+}
+
+.switch-auth a {
+    color: #3B82F6;
+    text-decoration: none;
+}
+
+.error-msg {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #EF4444;
+    color: #EF4444;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+.success-msg {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid #22C55E;
+    color: #22C55E;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
