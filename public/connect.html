@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mohamett.com - Connect</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-bottom: 1px solid #1a1a1a;
+    }
+    .logo { font-size: 20px; font-weight: bold; color: #3B82F6; }
+    .section-title { padding: 16px 20px 8px; font-size: 18px; font-weight: 600; }
+    .conn-list { margin: 0 20px; background: #111; border-radius: 12px; overflow: hidden; }
+    .conn-item {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px; border-bottom: 1px solid #1a1a1a;
+    }
+    .conn-item:last-child { border-bottom: none; }
+    .conn-name { display: flex; align-items: center; gap: 10px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.connected { background: #22C55E; }
+    .dot.disconnected { background: #EF4444; }
+    .status-text.connected { color: #22C55E; }
+    .status-text.disconnected { color: #EF4444; }
+    .btn-test {
+        background: #1a1a1a; color: #3B82F6; border: 1px solid #3B82F6;
+        padding: 6px 12px; border-radius: 8px; font-size: 13px;
+    }
+    .btn-add {
+        display: block; margin: 16px 20px; padding: 16px;
+        background: #3B82F6; color: white; text-align: center;
+        border-radius: 12px; font-weight: 600; border: none; width: calc(100% - 40px);
+    }
+    .modal-overlay {
+        display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.8); z-index: 100; align-items: flex-end;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+        background: #111; width: 100%; border-radius: 20px 20px 0 0;
+        padding: 24px 20px; max-height: 85vh; overflow-y: auto;
+    }
+    .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; margin-bottom: 6px; font-size: 13px; color: #888; }
+    .form-group input, .form-group select {
+        width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #2a2a2a;
+        border-radius: 8px; color: white; font-size: 14px;
+    }
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .btn-cancel {
+        flex: 1; padding: 14px; background: #1a1a1a; color: #888;
+        border: none; border-radius: 10px; font-weight: 600;
+    }
+    .btn-save {
+        flex: 1; padding: 14px; background: #3B82F6; color: white;
+        border: none; border-radius: 10px; font-weight: 600;
+    }
+    .type-fields { display: none; }
+    .type-fields.active { display: block; }
+    .bottom-nav {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        display: flex; justify-content: space-around; padding: 10px 0;
+        background: #0A0A0A; border-top: 1px solid #1a1a1a;
+    }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #666; text-decoration: none; font-size: 11px; }
+    .nav-item.active { color: #3B82F6; }
+    .nav-icon { font-size: 20px; }
+</style>
+</head>
+<body style="background:#0A0A0A; color:white; font-family: -apple-system, sans-serif; padding-bottom: 80px;">
+
+    <div class="page-header">
+        <div class="logo">⚡ mohamett.com</div>
+    </div>
+
+    <div class="section-title">Connections</div>
+    <div class="conn-list" id="connList">
+        <!-- JS populates here -->
+    </div>
+
+    <button class="btn-add" id="openAddModal">+ Add Connection</button>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <div class="modal-title">Add New Connection</div>
+
+            <div id="errorMsg" style="display:none; color:#EF4444; margin-bottom:12px; font-size:13px;"></div>
+
+            <div class="form-group">
+                <label>Connection Type</label>
+                <select id="connType">
+                    <option value="vps">VPS Server</option>
+                    <option value="tickerall">TickerAll API</option>
+                    <option value="mt5">MT5 Bridge</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Label</label>
+                <input type="text" id="connLabel" placeholder="My VPS Server">
+            </div>
+
+            <!-- VPS fields -->
+            <div class="type-fields active" id="fields-vps">
+                <div class="form-group">
+                    <label>VPS IP Address</label>
+                    <input type="text" id="vpsIp" placeholder="123.45.67.89">
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="vpsUsername" placeholder="root">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="vpsPassword" placeholder="••••••••">
+                </div>
+            </div>
+
+            <!-- TickerAll fields -->
+            <div class="type-fields" id="fields-tickerall">
+                <div class="form-group">
+                    <label>TickerAll API Key</label>
+                    <input type="text" id="apiKey" placeholder="API Key">
+                </div>
+            </div>
+
+            <!-- MT5 fields -->
+            <div class="type-fields" id="fields-mt5">
+                <div class="form-group">
+                    <label>MT5 API Token</label>
+                    <input type="text" id="apiToken" placeholder="Token">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancelModal">Cancel</button>
+                <button class="btn-save" id="saveConnection">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="/dashboard" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+        <a href="/connect" class="nav-item active"><span class="nav-icon">🔌</span>Connect</a>
+        <a href="/agents" class="nav-item"><span class="nav-icon">🤖</span>Agents</a>
+        <a href="/logs" class="nav-item"><span class="nav-icon">📜</span>Logs</a>
+        <a href="/settings" class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/';
+
+        const connList = document.getElementById('connList');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const connType = document.getElementById('connType');
+
+        const icons = { vps: 'VPS Server', tickerall: 'TickerAll API', mt5: 'MT5 Bridge' };
+
+        async function loadConnections() {
+            try {
+                const res = await fetch('/api/connections', {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await res.json();
+
+                if (!data.connections || data.connections.length === 0) {
+                    connList.innerHTML = '<div style="padding:20px; color:#666; text-align:center;">Weli wax connection ah ma jiro</div>';
+                    return;
+                }
+
+                connList.innerHTML = data.connections.map(c => `
+                    <div class="conn-item">
+                        <div class="conn-name">
+                            <span class="dot ${c.status}"></span>
+                            <span>${c.label || icons[c.type]}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span class="status-text ${c.status}">${c.status === 'connected' ? 'Connected' : 'Not Connected'}</span>
+                            <button class="btn-test" onclick="testConnection(${c.id})">Test</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function testConnection(id) {
+            try {
+                const res = await fetch(`/api/connections/${id}/connect`, {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('✅ Connection successful!');
+                } else {
+                    alert('❌ Connection failed: ' + (data.error || 'Unknown error'));
+                }
+                loadConnections();
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        document.getElementById('openAddModal').addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+        });
+
+        document.getElementById('cancelModal').addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+
+        connType.addEventListener('change', () => {
+            document.querySelectorAll('.type-fields').forEach(f => f.classList.remove('active'));
+            document.getElementById('fields-' + connType.value).classList.add('active');
+        });
+
+        document.getElementById('saveConnection').addEventListener('click', async () => {
+            const type = connType.value;
+            const label = document.getElementById('connLabel').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            let body = { type, label };
+
+            if (type === 'vps') {
+                body.vps_ip = document.getElementById('vpsIp').value;
+                body.vps_username = document.getElementById('vpsUsername').value;
+                body.vps_password = document.getElementById('vpsPassword').value;
+            } else if (type === 'tickerall') {
+                body.api_key = document.getElementById('apiKey').value;
+            } else if (type === 'mt5') {
+                body.api_token = document.getElementById('apiToken').value;
+            }
+
+            try {
+                const res = await fetch('/api/connections', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) throw new Error(data.error || 'Failed to save');
+
+                modalOverlay.classList.remove('active');
+                loadConnections();
+            } catch (err) {
+                errorMsg.textContent = err.message;
+                errorMsg.style.display = 'block';
+            }
+        });
+
+        loadConnections();
+    </script>
+</body>
+</html>
